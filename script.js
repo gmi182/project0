@@ -19,6 +19,7 @@ let newToDoContainer;
 let newTextElem;
 let loadFromStart = false;
 
+// loads TODOs from localstorage if any saved.
 let onDocumentReady = () => {
     const todoItems = JSON.parse(localStorage.getItem("todoItems"));
     if (todoItems !== null) {
@@ -36,7 +37,9 @@ if (document.readyState === "complete" || (document.readyState !== "loading" && 
     document.addEventListener("DOMContentLoaded", onDocumentReady);
 }
 
+// Functionality to enter a new TODO.
 function showNewToDoElement() {
+    // If if doesn't exist, we create it.
     if (newToDoContainer === undefined) {
         newToDoContainer = document.getElementById(classNames.TODO_NEW);
         // Creates <input> text with todo title.
@@ -56,16 +59,15 @@ function showNewToDoElement() {
         newToDoContainer.appendChild(buttons);
         newTextElem.focus();
     } else if (newToDoContainer.classList.contains("hidden") === true) {
+        // Already created, we just show it and focus it.
         newToDoContainer.classList.remove("hidden");
         newTextElem.focus();
     } else {
         alert("Can't create a new item while editing an existing one. Plase, delete or save the one in progress.");
     }
-
 }
 
-// I don't need to send textElem as parameter everywhere
-// I could just use the newTextElem prop
+// Creates save & delete buttons for the new TODO item.
 function createSaveDeleteButtons() {
     const buttonsContainer = document.createElement("span");
     const saveButton = document.createElement("button");
@@ -80,6 +82,7 @@ function createSaveDeleteButtons() {
     return buttonsContainer;
 }
 
+// Callback when saving a new TODO item.
 function saveToDoItem() {
     if (newTextElem.value !== "") {
         createToDoElement(newTextElem.value.trim());
@@ -96,6 +99,7 @@ function closeNewToDoItem() {
     }
 }
 
+// Creates new TODO item post-it like.
 function createToDoElement (value, checked = false) {
     let id = "checkbox-" + value.replace(/\s+/g, "-").toLowerCase();
     if (document.getElementById(id) !== null) {
@@ -138,8 +142,8 @@ function createToDoElement (value, checked = false) {
     updateValues();
 }
 
+// Deletes an already created TODO item.
 function deleteItem(id) {
-    // alert with are you sure you want to delete item
     let checkbox = document.getElementById(id);
     // search for the LI element
     let li = checkbox.parentElement.parentElement;
@@ -147,6 +151,7 @@ function deleteItem(id) {
     updateValues();
 }
 
+// Updates counters and stored values.
 function updateValues() {
     let itemCountElem = document.getElementById("item-count");
     let allToDoItems = document.querySelectorAll("#todo-list > li");
@@ -158,6 +163,7 @@ function updateValues() {
     updateStoredValues();
 }
 
+// Updates local storage values with current TODO items
 function updateStoredValues() {
     // Avoids to save again the same values if loading from localstorage
     if (loadFromStart === true) return;
@@ -173,10 +179,3 @@ function updateStoredValues() {
         localStorage.removeItem("todoItems");
     }
 }
-
-/* TODO
-
-1) Styles like Post-it?
-2) Make objects?
-
-*/
