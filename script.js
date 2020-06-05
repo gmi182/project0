@@ -17,6 +17,24 @@ const uncheckedCountSpan = document.getElementById('unchecked-count');
 const newTodoButton = document.getElementById(classNames.NEW_TODO_BUTTON);
 let newToDoContainer;
 let newTextElem;
+let loadFromStart = false;
+
+let onDocumentReady = () => {
+    const todoItems = JSON.parse(localStorage.getItem("todoItems"));
+    if (todoItems !== null) {
+        loadFromStart = true;
+        todoItems.forEach((input) => {
+            createToDoElement(input.name, input.checked);
+        });
+        loadFromStart = false;
+    }
+};
+  
+if (document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)) {
+    onDocumentReady();
+} else {
+    document.addEventListener("DOMContentLoaded", onDocumentReady);
+}
 
 function showNewToDoElement() {
     if (newToDoContainer === undefined) {
@@ -71,12 +89,14 @@ function saveToDoItem() {
 }
 
 function closeNewToDoItem() {
-    newToDoContainer.classList.add("hidden");
-    newTextElem.value = "";
-    newTodoButton.focus();
+    if (newToDoContainer !== undefined) {
+        newToDoContainer.classList.add("hidden");
+        newTextElem.value = "";
+        newTodoButton.focus();
+    }
 }
 
-function createToDoElement (value) {
+function createToDoElement (value, checked = false) {
     let id = "checkbox-" + value.replace(/\s+/g, "-").toLowerCase();
     if (document.getElementById(id) !== null) {
         alert("This new TO-DO list already exists.");
@@ -94,6 +114,8 @@ function createToDoElement (value) {
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.name = "todoItem";
+    checkbox.value = value;
+    checkbox.checked = checked;
     checkbox.id = id;
     checkbox.onclick = updateValues.bind(this);
     // Creates <LABEL> for the checkbox
@@ -133,12 +155,28 @@ function updateValues() {
     let uncheckedCountElem = document.getElementById("unchecked-count");
     let checkedItems = document.querySelectorAll("#todo-list > li input:checked");
     uncheckedCountElem.innerHTML = allToDoItems.length - checkedItems.length;
+    updateStoredValues();
+}
+
+function updateStoredValues() {
+    // Avoids to save again the same values if loading from localstorage
+    if (loadFromStart === true) return;
+
+    const allToDoInputs = document.querySelectorAll("#todo-list > li input");
+    if (allToDoInputs.length > 0) {
+        let todoItems = [];
+        allToDoInputs.forEach((input) => {
+            todoItems.push({name: input.value, checked: input.checked});
+        });
+        localStorage.setItem("todoItems", JSON.stringify(todoItems));
+    } else {
+        localStorage.removeItem("todoItems");
+    }
 }
 
 /* TODO
 
 1) Styles like Post-it?
 2) Make objects?
-3) Save values in the tab localstorage
 
 */
