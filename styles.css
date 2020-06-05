@@ -43,14 +43,9 @@ ul {
 
 .todo-list {
     flex: 1 1 0;
-    margin-top: 20px;
-    padding: 20px;
+    padding: 0 20px;
     overflow-y: auto;
 }
-
-/* .todo-delete {
-    margin: 10px;
-} */
 
 .todo-checkbox {
     margin: 10px;
@@ -69,10 +64,15 @@ ul {
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    height: 40px;
+}
+
+#todo-new input {
+    height: 20px;
 }
 
 #todo-new.hidden {
-    display: none;
+    visibility: hidden;
 }
 
 button.todo-delete,

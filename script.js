@@ -8,36 +8,32 @@ const classNames = {
     TODO_NEW: "todo-new",
     TODO_SAVE: "todo-save",
     TODO_DELETE: "todo-delete",
+    NEW_TODO_BUTTON: "new-todo-button"
 };
 
 const list = document.getElementById('todo-list');
 const itemCountSpan = document.getElementById('item-count');
 const uncheckedCountSpan = document.getElementById('unchecked-count');
+const newTodoButton = document.getElementById(classNames.NEW_TODO_BUTTON);
 let newToDoContainer;
 let newTextElem;
-
-// function newTodo() {
-//     let todoList = document.getElementById(classNames.TODO_LIST);
-//     let item = createToDoElement();
-
-//     // if (item !== null) {
-//         // todoList.appendChild(item);
-//         // let newItem = document.getElementById(classNames.TODO_NEW);
-//         // newItem.focus();
-//     // }
-// }
 
 function showNewToDoElement() {
     if (newToDoContainer === undefined) {
         newToDoContainer = document.getElementById(classNames.TODO_NEW);
         // Creates <input> text with todo title.
         newTextElem = document.createElement("input");
+        newTextElem.addEventListener("keyup", (e) => {
+            if (e.keyCode === 13) {
+                saveToDoItem();
+            }
+        });
         newTextElem.class = classNames.TODO_TEXT;
         newTextElem.type = "text";
         // Appends <input> into <DIV> wrapper
         newToDoContainer.appendChild(newTextElem);
         // Creates buttons to save/delete
-        const buttons = createSaveDeleteButtons(newTextElem);
+        const buttons = createSaveDeleteButtons();
         // Append buttons to <DIV> wrapper
         newToDoContainer.appendChild(buttons);
         newTextElem.focus();
@@ -52,11 +48,11 @@ function showNewToDoElement() {
 
 // I don't need to send textElem as parameter everywhere
 // I could just use the newTextElem prop
-function createSaveDeleteButtons(textElem) {
+function createSaveDeleteButtons() {
     const buttonsContainer = document.createElement("span");
     const saveButton = document.createElement("button");
     saveButton.classList.add(classNames.TODO_SAVE);
-    saveButton.onclick = saveToDoItem.bind(this, textElem);
+    saveButton.onclick = saveToDoItem.bind(this);
     const deleteButton = document.createElement("button");
     deleteButton.classList.add(classNames.TODO_DELETE);
     deleteButton.onclick = closeNewToDoItem.bind(this);
@@ -66,9 +62,9 @@ function createSaveDeleteButtons(textElem) {
     return buttonsContainer;
 }
 
-function saveToDoItem(textElem) {
-    if (textElem.value !== "") {
-        createToDoElement(textElem.value.trim());
+function saveToDoItem() {
+    if (newTextElem.value !== "") {
+        createToDoElement(newTextElem.value.trim());
     } else {
         alert("Can't save an empty TO-DO list item");
     }
@@ -77,6 +73,7 @@ function saveToDoItem(textElem) {
 function closeNewToDoItem() {
     newToDoContainer.classList.add("hidden");
     newTextElem.value = "";
+    newTodoButton.focus();
 }
 
 function createToDoElement (value) {
@@ -140,10 +137,8 @@ function updateValues() {
 
 /* TODO
 
-1) on press enter, submit new item
-2) give a fixed height to the NEW item, so it won't jump when showing/hidding
-3) Styles like Post-it?
-4) Make objects?
-5) Save values in the tab localstorage
+1) Styles like Post-it?
+2) Make objects?
+3) Save values in the tab localstorage
 
 */
